@@ -5,7 +5,7 @@
 
 void LogManager::Init() noexcept
 {
-#ifndef NDEBUG
+#ifndef NDEBUG1
     AllocConsole();
     freopen_s(&m_f, "CONOUT$", "w", stdout);
     spdlog::set_level(spdlog::level::debug);
@@ -16,7 +16,7 @@ void LogManager::Init() noexcept
 
 void LogManager::Shutdown() noexcept
 {
-#ifndef NDEBUG
+#ifndef NDEBUG1
     FreeConsole();
 #pragma warning(suppress : 6387)
     fclose(m_f);

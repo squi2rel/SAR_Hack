@@ -4,6 +4,7 @@
 
 #include "../Modules/ModulesManager.hpp"
 #include "../../Features/ESP/EspModule.hpp"
+#include "../../Features/Aimbot/Aimbot.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
@@ -74,15 +75,23 @@ void InitHooksDependencies(HooksManager* pHooksManager, GameContext* ctx)
 
 void __fastcall HooksDefinitions::HkLocalPlayerStart(void* pLocalPlayer)
 {
-	gpCtx->localPlayer = reinterpret_cast<LocalPlayerScript*>(pLocalPlayer);
+	EspModule::po = pLocalPlayer;
 
-	return HooksDefinitions::oLocalPlayerStart(pLocalPlayer);
+	LocalPlayerScript* pointer = reinterpret_cast<LocalPlayerScript*>(pLocalPlayer);
+	gpCtx->localPlayer = pointer;
+
+	HooksDefinitions::oLocalPlayerStart(pLocalPlayer);
+
+	gpCtx->LocalStart(pointer);
 }
 void __fastcall HooksDefinitions::HkNetworkPlayerStart(void* pNetworkPlayer, int16_t playerId, int8_t b1)
 {
-	gpCtx->players.push_back(reinterpret_cast<NetworkPlayer*>(pNetworkPlayer));
+	NetworkPlayer* pointer = reinterpret_cast<NetworkPlayer*>(pNetworkPlayer);
+	gpCtx->players.push_back(pointer);
 
-	return HooksDefinitions::oNetworkPlayerStart(pNetworkPlayer, playerId, b1);
+	HooksDefinitions::oNetworkPlayerStart(pNetworkPlayer, playerId, b1);
+
+	gpCtx->PlayerStart(pointer);
 }
 void __fastcall HooksDefinitions::HkNetworkPlayerDestroy(void* pNetworkPlayer)
 {
@@ -91,9 +100,13 @@ void __fastcall HooksDefinitions::HkNetworkPlayerDestroy(void* pNetworkPlayer)
 		gpCtx->localPlayer = nullptr;
 	}
 
-	gpCtx->players.remove(reinterpret_cast<NetworkPlayer*>(pNetworkPlayer));
+	NetworkPlayer* pointer = reinterpret_cast<NetworkPlayer*>(pNetworkPlayer);
 
-	return HooksDefinitions::oNetworkPlayerDestroy(pNetworkPlayer);
+	gpCtx->players.remove(pointer);
+
+	HooksDefinitions::oNetworkPlayerDestroy(pNetworkPlayer);
+
+	gpCtx->PlayerDestroy(pointer);
 }
 HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChain, UINT syncInterval, UINT flags)
 {
@@ -133,6 +146,11 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 					ImGui::SetNextWindowSize({800.0f, 550.0f});
 					if (ImGui::Begin("SuperAnimalHack", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
 					{
+						ImGui::Text("Global");
+						ImGui::Checkbox("Bwoking dead mode", &cfg.bZombieMode);
+
+						ImGui::Separator();
+
 						ImGui::Text("No recoil");
 						ImGui::Checkbox("NoRecoil", &cfg.bNoRecoil);
 
@@ -155,12 +173,29 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 						ImGui::Checkbox("Snaplines", &cfg.bSnaplines);
 						ImGui::SliderFloat("Snaplines distance", &cfg.fMaxSnaplineRenderDistance, 0.0f, 5000.0f);
 						ImGui::SliderFloat("Snaplines near distance", &cfg.fNearSnaplineRenderDistance, 0.0f, 5000.0f);
+
+						ImGui::Separator();
+
+						ImGui::Text("Aimbot");
+						ImGui::Checkbox("Aimbot", &cfg.bAimbot);
+						ImGui::Checkbox("Keep active", &cfg.bAutoAimbot);
+						if (cfg.bAutoAimbot)
+						{
+							ImGui::Text("Or hold LSHIFT to deactive");
+						}
+						else
+						{
+							ImGui::Text("Or hold LSHIFT to active");
+						}
+						ImGui::SliderFloat("Max distance", &cfg.fAimbotMaxDistance, 10.0f, 200.0f);
+						ImGui::SliderFloat("Mouse move percent", &cfg.fAimbotAlpha, 0.0f, 1.0f);
+						ImGui::Combo("Mode", &cfg.iAimbotMode, AimbotModule::modes, IM_ARRAYSIZE(AimbotModule::modes));
 					}
 					ImGui::End();
 				}
 
 				auto* const esp = modules->GetModule<EspModule>(ESP_MODULE_NAME);
-			
+
 				esp->Draw();
 			}
 			ImGui::End();

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\SuperAnimalHack\CMakeFiles\23142a0ead95a36148a88f392b663fec\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FB58EAF4-D0FC-3260-9F71-6CF847306321}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

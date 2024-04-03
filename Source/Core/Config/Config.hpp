@@ -16,9 +16,13 @@ struct Config
 	bool bBoxes = false;
 	bool bBhop = false;
 	bool bEsp = false;
+	bool bEspShowDistance = true;
 	bool bZombieMode = false;
 	bool bAimbot = false;
 	bool bAutoAimbot = false;
+	bool bAimbotLock = true;
+	bool bAimbotAutoSwitch = false;
+	bool bAimbotForecast = true;
 
 	int iAimbotMode = 0;
 

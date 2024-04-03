@@ -70,7 +70,7 @@ void EspModule::Draw()
 					color
 				);
 
-				if (distanceToTarget > nearDistance || distanceToTarget < 35) continue;
+				if (!cfg.bEspShowDistance || distanceToTarget > nearDistance || distanceToTarget < 35) continue;
 
 				const float angle = atan2f(screenTargetPos.x - screenLocalPlayerPos.x, screenTargetPos.y - screenLocalPlayerPos.y + 15);
 				const auto& str = std::to_string((int)(distanceToTarget));

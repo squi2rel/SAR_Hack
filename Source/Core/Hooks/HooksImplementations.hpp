@@ -171,6 +171,7 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 						ImGui::Text("ESP");
 						ImGui::Checkbox("ESP", &cfg.bEsp);
 						ImGui::Checkbox("Snaplines", &cfg.bSnaplines);
+						ImGui::Checkbox("Show distance", &cfg.bEspShowDistance);
 						ImGui::SliderFloat("Snaplines distance", &cfg.fMaxSnaplineRenderDistance, 0.0f, 5000.0f);
 						ImGui::SliderFloat("Snaplines near distance", &cfg.fNearSnaplineRenderDistance, 0.0f, 5000.0f);
 
@@ -179,6 +180,9 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 						ImGui::Text("Aimbot");
 						ImGui::Checkbox("Aimbot", &cfg.bAimbot);
 						ImGui::Checkbox("Keep active", &cfg.bAutoAimbot);
+						ImGui::Checkbox("Lock target", &cfg.bAimbotLock);
+						ImGui::Checkbox("Auto shotgun", &cfg.bAimbotAutoSwitch);
+						ImGui::Checkbox("Forecast movement", &cfg.bAimbotForecast);
 						if (cfg.bAutoAimbot)
 						{
 							ImGui::Text("Or hold LSHIFT to deactive");

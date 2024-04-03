@@ -16,7 +16,11 @@ const char* AimbotModule::modes[] = {
 	"LowestHealth"
 };
 
-bool useVel = true;
+const static int16_t shotgunID1 = 0x11a, shotgunID2 = 0x11b;
+
+NetworkPlayer* lockedOn = nullptr;
+
+bool setWeapon = false;
 std::map<short, Vector2> lastPos;
 long long lastTime = 0;
 
@@ -31,6 +35,7 @@ void PlayerStart(NetworkPlayer* player) {
 
 void PlayerDestroy(NetworkPlayer* player) {
 	lastPos.erase(player->playerID);
+	if (player == lockedOn) lockedOn = nullptr;
 }
 
 void LocalPlayerStart(LocalPlayerScript* player) {
@@ -65,42 +70,50 @@ void AimbotModule::Run()
 		float nearest = INFINITY;
 		const NetworkPlayer* targetPlayer = nullptr;
 
-		switch (cfg.iAimbotMode)
+		if (lockedOn != nullptr && lockedOn->playerIsDead) lockedOn = nullptr;
+		if (cfg.bAimbotLock && lockedOn != nullptr)
 		{
-		case 0: //ClosestDistance
-			for (auto* target : ctx.players)
+			targetPlayer = lockedOn;
+		}
+		else
+		{
+			switch (cfg.iAimbotMode)
 			{
-				if (!target) continue;
-				if (target == ctx.localPlayer->player) continue;
-				if (target->playerIsDead || cfg.bZombieMode && target->isZombie == ctx.localPlayer->player->isZombie) continue;
+			case 0: //ClosestDistance
+				for (auto* target : ctx.players)
+				{
+					if (!target) continue;
+					if (target == ctx.localPlayer->player) continue;
+					if (target->playerIsDead || cfg.bZombieMode && target->isZombie == ctx.localPlayer->player->isZombie) continue;
 
-				const auto& targetPos = target->pos;
-				const auto& distanceToTarget = Utils::Length(localPlayerPos, targetPos);
+					const auto& targetPos = target->pos;
+					const auto& distanceToTarget = Utils::Length(localPlayerPos, targetPos);
 
-				if (distanceToTarget > cfg.fAimbotMaxDistance) continue;
-				if (distanceToTarget < nearest) {
-					nearest = distanceToTarget;
-					targetPlayer = target;
+					if (distanceToTarget > cfg.fAimbotMaxDistance) continue;
+					if (distanceToTarget < nearest) {
+						nearest = distanceToTarget;
+						targetPlayer = target;
+					}
 				}
-			}
-			break;
-		case 1: //LowestHealth
-			for (auto* target : ctx.players)
-			{
-				if (!target) continue;
-				if (target == ctx.localPlayer->player) continue;
-				if (target->playerIsDead || cfg.bZombieMode && target->isZombie == ctx.localPlayer->player->isZombie) continue;
+				break;
+			case 1: //LowestHealth
+				for (auto* target : ctx.players)
+				{
+					if (!target) continue;
+					if (target == ctx.localPlayer->player) continue;
+					if (target->playerIsDead || cfg.bZombieMode && target->isZombie == ctx.localPlayer->player->isZombie) continue;
 
-				const auto& targetPos = target->pos;
-				if (Utils::Length(localPlayerPos, targetPos) > cfg.fAimbotMaxDistance) continue;
+					const auto& targetPos = target->pos;
+					if (Utils::Length(localPlayerPos, targetPos) > cfg.fAimbotMaxDistance) continue;
 
-				const auto& targetHealth = target->playerHP;
-				if (targetHealth < nearest) {
-					nearest = targetHealth;
-					targetPlayer = target;
+					const auto& targetHealth = target->playerHP;
+					if (targetHealth < nearest) {
+						nearest = targetHealth;
+						targetPlayer = target;
+					}
 				}
+				break;
 			}
-			break;
 		}
 
 		if (targetPlayer == nullptr) return;
@@ -111,11 +124,44 @@ void AimbotModule::Run()
 		auto& last = it->second;
 
 		const auto& distanceToTarget = Utils::Length(localPlayerPos, targetPos);
-		const auto deltaX = (targetPos.x - last.x) * distanceToTarget / 10, deltaY = (targetPos.y - last.y) * distanceToTarget / 10;//TODO test this
+		const auto deltaX = (targetPos.x - last.x) * distanceToTarget / 10, deltaY = (targetPos.y - last.y) * distanceToTarget / 10;
 		last.x = targetPos.x;
 		last.y = targetPos.y;
 
-		const auto& screenPos = hooks->WorldToScreenPoint2(ctx.localPlayer->camera, useVel ? Vector3(targetPos.x + deltaX, targetPos.y + deltaY, 0.0f) : Vector3(targetPos.x, targetPos.y, 0.0f));
+		if (cfg.bAimbotAutoSwitch)
+		{
+			const auto& arr = ctx.localPlayer->player->equipmentIDs->equipments;
+			if (distanceToTarget < 40 && !setWeapon)
+			{
+				if (arr[0] == shotgunID1 || arr[0] == shotgunID2)
+				{
+					keybd_event('1', 0, 0, 0);
+					keybd_event('1', 0, KEYEVENTF_KEYUP, 0);
+					setWeapon = true;
+				}
+				else if (arr[1] == shotgunID1 || arr[1] == shotgunID2)
+				{
+					keybd_event('2', 0, 0, 0);
+					keybd_event('2', 0, KEYEVENTF_KEYUP, 0);
+					setWeapon = true;
+				}
+			}
+			else if (distanceToTarget > 60 && setWeapon) {
+				if (arr[0] == shotgunID1 || arr[0] == shotgunID2)
+				{
+					keybd_event('2', 0, 0, 0);
+					keybd_event('2', 0, KEYEVENTF_KEYUP, 0);
+				}
+				else
+				{
+					keybd_event('1', 0, 0, 0);
+					keybd_event('1', 0, KEYEVENTF_KEYUP, 0);
+				}
+				setWeapon = false;
+			}
+		}
+
+		const auto& screenPos = hooks->WorldToScreenPoint2(ctx.localPlayer->camera, cfg.bAimbotForecast ? Vector3(targetPos.x + deltaX, targetPos.y + deltaY, 0.0f) : Vector3(targetPos.x, targetPos.y, 0.0f));
 		const Vector3& screenTargetPos = screenPos;
 
 		RECT rect;
@@ -149,5 +195,10 @@ void AimbotModule::Run()
 			const float angle = atan2f(screenTargetPos.x - screenLocalPlayerPos.x, screenTargetPos.y - screenLocalPlayerPos.y + 15);
 			SetCursorPos(x + width / 2 + (int)(sin(angle) * 200), y + height / 2 - (int)(cos(angle) * 200));
 		}
+	}
+	else
+	{
+		lockedOn = nullptr;
+		setWeapon = false;
 	}
 }

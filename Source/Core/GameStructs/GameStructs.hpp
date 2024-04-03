@@ -106,7 +106,9 @@ public:
 	int16_t killedByPlayerID; //0x014C
 	char pad_014E[2]; //0x014E
 	float lastPingTimeInSeconds; //0x0150
-	char pad_0154[100]; //0x0154
+	char pad_0154[52]; //0x0154
+	class EquipmentArray* equipmentIDs; //0x0188
+	char pad_0190[40]; //0x0190
 	float healingJuice; //0x01B8
 	bool healingCurrently; //0x01BC
 	char pad_01BD[3]; //0x01BD
@@ -180,6 +182,13 @@ public:
 	bool isAdminGhost; //0x004C
 	char pad_004D[7]; //0x004D
 }; //Size: 0x0054
+
+class EquipmentArray
+{
+public:
+	char pad_0000[32]; //0x0000
+	int16_t equipments[6]; //0x0020
+}; //Size: 0x002C
 
 class Bone
 {

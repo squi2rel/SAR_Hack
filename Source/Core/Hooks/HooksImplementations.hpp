@@ -179,10 +179,10 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 
 						ImGui::Text("Aimbot");
 						ImGui::Checkbox("Aimbot", &cfg.bAimbot);
-						ImGui::Checkbox("Keep active", &cfg.bAutoAimbot);
 						ImGui::Checkbox("Lock target", &cfg.bAimbotLock);
 						ImGui::Checkbox("Auto shotgun", &cfg.bAimbotAutoSwitch);
 						ImGui::Checkbox("Forecast movement", &cfg.bAimbotForecast);
+						ImGui::Checkbox("Keep active", &cfg.bAutoAimbot);
 						if (cfg.bAutoAimbot)
 						{
 							ImGui::Text("Or hold LSHIFT to deactive");

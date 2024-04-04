@@ -68,12 +68,12 @@ void AimbotModule::Run()
 		const auto& screenLocalPlayerPos = hooks->WorldToScreenPoint2(ctx.localPlayer->camera, Vector3(localPlayerPos.x, localPlayerPos.y, 0.0f));
 
 		float nearest = INFINITY;
-		const NetworkPlayer* targetPlayer = nullptr;
+		NetworkPlayer* targetPlayer = nullptr;
 
-		if (lockedOn != nullptr && lockedOn->playerIsDead) lockedOn = nullptr;
+		if (lockedOn != nullptr && lockedOn->playerIsDead) return;
 		if (cfg.bAimbotLock && lockedOn != nullptr)
 		{
-			targetPlayer = lockedOn;
+			targetPlayer = Utils::Length(localPlayerPos, lockedOn->pos) > cfg.fAimbotMaxDistance ? nullptr : lockedOn;
 		}
 		else
 		{
@@ -116,6 +116,7 @@ void AimbotModule::Run()
 			}
 		}
 
+		lockedOn = targetPlayer;
 		if (targetPlayer == nullptr) return;
 
 		const auto& targetPos = targetPlayer->pos;
@@ -146,7 +147,7 @@ void AimbotModule::Run()
 					setWeapon = true;
 				}
 			}
-			else if (distanceToTarget > 60 && setWeapon) {
+			else if (distanceToTarget > 50 && setWeapon) {
 				if (arr[0] == shotgunID1 || arr[0] == shotgunID2)
 				{
 					keybd_event('2', 0, 0, 0);

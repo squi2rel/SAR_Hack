@@ -4,6 +4,8 @@
 #include <list>
 #include <functional>
 
+#pragma pack(push, 1)
+
 // Generated using ReClass.NET
 
 enum struct EPlayerActions // GEnum3
@@ -127,7 +129,7 @@ public:
 	bool attacking; //0x0208
 	bool currentAttackIsMelee; //0x0209
 	bool currentAttackIsAuto; //0x020A
-	char pad_020B[181]; //0x020B
+	char pad_020B[185]; //0x020B
 	Vector2 pos; //0x02C4
 	char pad_02CC[20]; //0x02CC
 	bool needTrackFootsteps; //0x02E0
@@ -241,6 +243,7 @@ public:
 	float maxY; //0x0024
 }; //Size: 0x0028
 
+#pragma pack(pop)
 
 constexpr const int LOCAL_PLAYER_INDEX = 0;
 class GameContext

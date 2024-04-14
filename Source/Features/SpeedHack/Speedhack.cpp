@@ -6,7 +6,7 @@
 SpeedhackModule::SpeedhackModule(ModulesManager* const modules, HooksManager* const hooks, Config& cfg)
 	: ModuleBase(SPEEDHACK_MODULE_NAME, modules, hooks, cfg), m_jumpSpeedMultiplier(nullptr)
 {
-	uintptr_t addr = (uintptr_t)GetModuleHandle("GameAssembly.dll") + 0x22f11f4;
+	uintptr_t addr = (uintptr_t)GetModuleHandle("GameAssembly.dll") + 0x22f11f4;//TODO broken
 
 	m_jumpSpeedMultiplier = &(*(float*)addr);
 }

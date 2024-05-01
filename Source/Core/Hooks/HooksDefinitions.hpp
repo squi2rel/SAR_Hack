@@ -27,10 +27,10 @@ namespace HooksDefinitions
 	WNDPROC oWndProc = nullptr;
 	
 	//RVA
-	uintptr_t offsetNetworkPlayerStart = 0x116C9D0; // -> <Player>.Start()
-	uintptr_t offsetNetworkPlayerDestroy = 0x1166780; // -> <Player>.OnDestroy()
-	uintptr_t offsetWorldToScreenPoint = 0x1E2BBD0; // -> <Camera>.WorldToScreenPoint(Vector3)
-	uintptr_t offsetLocalPlayerStart = 0x108D550; // -> <LocalPlayer>.Start()
+	uintptr_t offsetNetworkPlayerStart = 0x1554520; // -> <Player>.Start()
+	uintptr_t offsetNetworkPlayerDestroy = 0x154E2D0; // -> <Player>.OnDestroy()
+	uintptr_t offsetWorldToScreenPoint = 0xB99C10; // -> <Camera>.WorldToScreenPoint(Vector3)
+	uintptr_t offsetLocalPlayerStart = 0x1288CB0; // -> <LocalPlayer>.Start()
 
 	HRESULT __stdcall HkResizeBuffers(IDXGISwapChain* pSwapChain, const UINT BufferCount, const UINT Width, const UINT Height, const DXGI_FORMAT NewFormat, const UINT SwapChainFlags);
 	HRESULT __stdcall HkSetFullscreenState(IDXGISwapChain* pSwapChain, const BOOL FullScreen, IDXGIOutput* pTarget);

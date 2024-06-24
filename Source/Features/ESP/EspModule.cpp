@@ -20,6 +20,7 @@ void EspModule::Run()
 
 void EspModule::Draw()
 {
+
 	if (cfg.bEsp)
 	{
 		Sleep(5); // Made to remove textures blicks

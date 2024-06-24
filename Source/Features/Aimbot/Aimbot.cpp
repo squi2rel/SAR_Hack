@@ -13,6 +13,7 @@ AimbotModule::AimbotModule(ModulesManager* const modules, HooksManager* const ho
 
 const char* AimbotModule::modes[] = {
 	"ClosestDistance",
+	"ClosestDistanceToMouse",
 	"LowestHealth"
 };
 
@@ -50,7 +51,7 @@ void AimbotModule::Init()
 
 void AimbotModule::Run()
 {
-	if (getTimeMillis() - lastTime < 1000 / 60) return;
+	if (getTimeMillis() - lastTime < 1000 / 25) return;
 	lastTime = getTimeMillis();
 	if (cfg.bAimbot && (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0x8000 == cfg.bAutoAimbot)
 	{
@@ -69,6 +70,16 @@ void AimbotModule::Run()
 
 		float nearest = INFINITY;
 		NetworkPlayer* targetPlayer = nullptr;
+
+		RECT rect;
+		GetClientRect(window, &rect);
+		POINT windowPos = { rect.left, rect.top };
+		ClientToScreen(window, &windowPos);
+		const int& x = windowPos.x;
+		const int& y = windowPos.y;
+		POINT mouse;
+		GetCursorPos(&mouse);
+		const int screenX = (int) mouse.x - x, screenY = (int) ImGui::GetIO().DisplaySize.y - (int) mouse.y + y;
 
 		if (lockedOn != nullptr && lockedOn->playerIsDead) return;
 		if (cfg.bAimbotLock && lockedOn != nullptr)
@@ -96,7 +107,25 @@ void AimbotModule::Run()
 					}
 				}
 				break;
-			case 1: //LowestHealth
+			case 1: //ClosestDistanceToMouse
+				for (auto* target : ctx.players)
+				{
+					if (!target) continue;
+					if (target == ctx.localPlayer->player) continue;
+					if (target->playerIsDead || cfg.bZombieMode && target->isZombie == ctx.localPlayer->player->isZombie) continue;
+
+					const auto& targetPos = target->pos;
+					Vector3 v = hooks->WorldToScreenPoint2(ctx.localPlayer->camera, Vector3(targetPos.x, targetPos.y, 0.0f));
+					const auto& distanceToTarget = Utils::Length(Vector2((float) screenX, (float) screenY), Vector2(v.x, v.y));
+
+					if (Utils::Length(localPlayerPos, targetPos) > cfg.fAimbotMaxDistance) continue;
+					if (distanceToTarget < nearest) {
+						nearest = distanceToTarget;
+						targetPlayer = target;
+					}
+				}
+				break;
+			case 2: //LowestHealth
 				for (auto* target : ctx.players)
 				{
 					if (!target) continue;
@@ -164,14 +193,6 @@ void AimbotModule::Run()
 
 		const auto& screenPos = hooks->WorldToScreenPoint2(ctx.localPlayer->camera, cfg.bAimbotForecast ? Vector3(targetPos.x + deltaX, targetPos.y + deltaY, 0.0f) : Vector3(targetPos.x, targetPos.y, 0.0f));
 		const Vector3& screenTargetPos = screenPos;
-
-		RECT rect;
-		GetClientRect(window, &rect);
-		POINT windowPos = { rect.left, rect.top };
-		ClientToScreen(window, &windowPos);
-
-		const int& x = windowPos.x;
-		const int& y = windowPos.y;
 		const int width = rect.right;
 		const int height = rect.bottom;
 

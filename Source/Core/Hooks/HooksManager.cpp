@@ -37,8 +37,9 @@ void HooksManager::Init(ModulesManager * modules)
 	m_modules = modules;
 
 	uintptr_t appBase = reinterpret_cast<uintptr_t>(GetModuleHandle(ASSEMBLY_NAME));
-	
+
 	WorldToScreenPoint = reinterpret_cast<T_WorldToScreenPoint>(appBase + offsetWorldToScreenPoint);
+	ScreenToWorldPoint = reinterpret_cast<T_ScreenToWorldPoint>(appBase + offsetScreenToWorldPoint);
 	pLocalPlayerStart = reinterpret_cast<T_LocalPlayerStart>(appBase + offsetLocalPlayerStart);
 	pNetworkPlayerStart = reinterpret_cast<T_NetworkPlayerStart>(appBase + offsetNetworkPlayerStart);
 	pNetworkPlayerDestroy = reinterpret_cast<T_NetworkPlayerDestroy>(appBase + offsetNetworkPlayerDestroy);
@@ -85,6 +86,11 @@ void HooksManager::Shutdown()
 Vector3 HooksManager::WorldToScreenPoint2(void* camera, const Vector3& point) const
 {
 	return WorldToScreenPoint(camera, point);
+}
+
+Vector3 HooksManager::ScreenToWorldPoint2(void* camera, const Vector3& point) const
+{
+	return ScreenToWorldPoint(camera, point);
 }
 
 HooksManager::GraphicsContext& HooksManager::GetGraphicsContext() noexcept

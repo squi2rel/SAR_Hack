@@ -44,6 +44,7 @@ private:
 
 public:
 	Vector3 WorldToScreenPoint2(void* camera, const Vector3& point) const;
+	Vector3 ScreenToWorldPoint2(void* camera, const Vector3& point) const;
 	void NetworkPlayerBunnyhopPerformed2(void* pNetworkPlayer) const;
 
 	GraphicsContext& GetGraphicsContext() noexcept;

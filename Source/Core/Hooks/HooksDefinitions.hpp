@@ -11,6 +11,7 @@ namespace HooksDefinitions
 	typedef void(__fastcall* T_NetworkPlayerRollPerformed)(void* pNetworkPlayer, bool b1, bool b2, bool b3);
 	typedef void(__fastcall* T_NetworkPlayerStart)(void* pNetworkPlayer, int16_t playerId, int8_t b1);
 	typedef Vector3(__fastcall* T_WorldToScreenPoint)(void* camera, Vector3 point);
+	typedef Vector3(__fastcall* T_ScreenToWorldPoint)(void* camera, Vector3 point);
 	typedef void(__fastcall* T_NetworkPlayerDestroy)(void* pNetworkPlayer);
 	typedef void(__fastcall* T_LocalPlayerStart)(void* pLocalPlayer);
 	
@@ -21,6 +22,7 @@ namespace HooksDefinitions
 	T_NetworkPlayerStart oNetworkPlayerStart = nullptr;
 	T_SwapChainResizeBuffers oResizeBuffers = nullptr;
 	T_WorldToScreenPoint WorldToScreenPoint = nullptr;
+	T_ScreenToWorldPoint ScreenToWorldPoint = nullptr;
 	T_SwapChainPresent oSwapChainPresent = nullptr;
 	T_LocalPlayerStart pLocalPlayerStart = nullptr;
 	T_LocalPlayerStart oLocalPlayerStart = nullptr;
@@ -30,6 +32,7 @@ namespace HooksDefinitions
 	uintptr_t offsetNetworkPlayerStart = 0x1554520; // -> <Player>.Start()
 	uintptr_t offsetNetworkPlayerDestroy = 0x154E2D0; // -> <Player>.OnDestroy()
 	uintptr_t offsetWorldToScreenPoint = 0xB99C10; // -> <Camera>.WorldToScreenPoint(Vector3)
+	uintptr_t offsetScreenToWorldPoint = 0xB99820; // -> <Camera>.ScreenToWorldPoint(Vector3)
 	uintptr_t offsetLocalPlayerStart = 0x1288CB0; // -> <LocalPlayer>.Start()
 
 	HRESULT __stdcall HkResizeBuffers(IDXGISwapChain* pSwapChain, const UINT BufferCount, const UINT Width, const UINT Height, const DXGI_FORMAT NewFormat, const UINT SwapChainFlags);

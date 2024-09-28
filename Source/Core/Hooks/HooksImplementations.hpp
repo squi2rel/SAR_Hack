@@ -150,7 +150,7 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 						ImGui::Checkbox("Bwoking dead mode", &cfg.bZombieMode);
 
 						ImGui::Separator();
-
+						/*
 						ImGui::Text("No recoil");
 						ImGui::Checkbox("NoRecoil", &cfg.bNoRecoil);
 
@@ -160,7 +160,7 @@ HRESULT __stdcall HooksDefinitions::HkSwapChainPresent(IDXGISwapChain* pSwapChai
 						ImGui::Checkbox("Jump speedhack", &cfg.bSpeedhack);
 
 						ImGui::Separator();
-
+						*/
 						ImGui::Text("Camera");
 						ImGui::Checkbox("Zoom", &cfg.bZoomOverride);
 						ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "May cause lower FPS!!!");

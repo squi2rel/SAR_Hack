@@ -196,7 +196,7 @@ void AimbotModule::Run()
 		const int width = rect.right;
 		const int height = rect.bottom;
 
-		if (screenTargetPos.x > 0 && screenTargetPos.x < width && screenTargetPos.y > 0 && screenTargetPos.y < height)
+		if (screenTargetPos.x > 10 && screenTargetPos.x < width - 10 && screenTargetPos.y > 10 && screenTargetPos.y < height - 10)
 		{ //lerp set
 			POINT mouse;
 			GetCursorPos(&mouse);

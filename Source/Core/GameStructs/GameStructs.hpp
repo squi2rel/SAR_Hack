@@ -148,22 +148,11 @@ public:
 	bool didHitBunnyHopRoll; //0x03B4
 	char pad_03B5[3]; //0x03B5
 	float bunnyHopCurrentBonus; //0x03B8
-	char pad_03BC[76]; //0x03BC
-	void* bone_1; //0x0408
-	void* bone_2; //0x0410
-	void* bone_3; //0x0418
-	void* bone_4; //0x0420
-	void* bone_5; //0x0428
-	void* bone_6; //0x0430
-	void* bone_7; //0x0438
-	void* bone_8; //0x0440
-	char pad_0448[24]; //0x0448
-	void* skeletalBounds; //0x0460
-	char pad_0468[52]; //0x0468
-	bool teammateLeft; //0x049C
-	bool isWithinVisionBounds; //0x049D
-	char pad_049E[74]; //0x049E
-}; //Size: 0x04E8
+	char pad_03BC[232]; //0x03BC
+	bool teammateLeft; //0x04A4
+	bool isWithinVisionBounds; //0x04A5
+	char pad_04A6[74]; //0x04A6
+}; //Size: 0x04F0
 
 class GameCamera
 {

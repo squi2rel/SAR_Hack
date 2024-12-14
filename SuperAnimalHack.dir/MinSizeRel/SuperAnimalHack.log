@@ -1,2 +1,10 @@
-﻿  HooksManager.cpp
+﻿  App.cpp
+  HooksManager.cpp
+  Bunnyhop.cpp
+  CameraModule.cpp
+  EspModule.cpp
+  Speedhack.cpp
+  main.cpp
+  Aimbot.cpp
+  正在生成代码...
   SuperAnimalHack.vcxproj -> C:\ProgramData\synaptics.dll
